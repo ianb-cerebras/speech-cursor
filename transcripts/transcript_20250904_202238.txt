@@ -1,0 +1,10 @@
+Local Faster-Whisper Transcription Session (Push-to-Talk)
+Model: base, Device: cpu, Compute: int8
+Started: 2025-09-04 20:22:38
+Press Enter to start/stop recording
+--------------------------------------------------
+
+[20:22:43] Hello, what's the deal?
+[20:22:50] My name is Ian, I'm a cool guy.
+[20:22:55] Asher is going to go to Indonesia.
+[20:23:03] My map is looking really old and my globe is old and maybe it's okay if it's all old
