@@ -1,3 +1,11 @@
 .env
 
 venv/
+
+transcripts/
+
+.cursorrules
+
+node_modules/
+
+requirements.txt
