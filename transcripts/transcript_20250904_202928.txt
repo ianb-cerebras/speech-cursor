@@ -1,0 +1,11 @@
+Local Faster-Whisper Transcription Session (Push-to-Talk)
+Model: base, Device: cpu, Compute: int8
+Started: 2025-09-04 20:29:28
+Press Enter to start/stop recording
+--------------------------------------------------
+
+[20:29:32] My name's Ian. What's up?
+[20:29:39] Hello
+[20:29:42] Yo
+[20:29:46] Hi
+[20:29:50] Hello

@@ -1,0 +1,7 @@
+Local Faster-Whisper Transcription Session (Push-to-Talk)
+Model: base, Device: cpu, Compute: int8
+Started: 2025-09-04 20:58:05
+Press Enter to start/stop recording
+--------------------------------------------------
+
+[20:58:16] Hello, this is Tata.

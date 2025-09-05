@@ -9,6 +9,12 @@ import threading
 import queue
 import numpy as np
 import sys
+import subprocess
+try:
+    import pyautogui as pag
+    pag.FAILSAFE = False
+except Exception:
+    pag = None
 import termios
 import tty
 
@@ -139,6 +145,13 @@ class LocalSTTAgent:
                 
                 # Output in format expected by Node.js (to stdout)
                 print(f"[{timestamp}] -> {transcript}", flush=True)
+
+                # Optionally type directly into Cursor (editor or chat). Set CURSOR_SEND=0 to disable.
+                # To type into editor tab, leave CURSOR_PRESS_ENTER unset or set to 0.
+                # To submit to chat, set CURSOR_PRESS_ENTER=1.
+                if os.environ.get("CURSOR_SEND", "1") != "0":
+                    press_enter = os.environ.get("CURSOR_PRESS_ENTER", "0") != "0"
+                    self.send_to_cursor_chat(transcript, press_enter=press_enter)
             else:
                 print("No speech detected")
             
@@ -183,6 +196,39 @@ class LocalSTTAgent:
         except Exception as e:
             logger.error(f"Error transcribing audio: {e}")
             return ""
+
+    def send_to_cursor_chat(self, text: str, press_enter: bool | None = None):
+        """Send text to Cursor using pyautogui; optionally press Enter (chat).
+
+        If press_enter is None, reads env CURSOR_PRESS_ENTER (default "1").
+        Set CURSOR_PRESS_ENTER=0 to avoid submitting and just type into editor.
+        """
+        try:
+            # Resolve enter behavior from arg/env
+            if press_enter is None:
+                press_enter = os.environ.get("CURSOR_PRESS_ENTER", "1") != "0"
+
+            # Bring Cursor to front (so keystrokes go to the right app)
+            subprocess.run(["osascript", "-e", "tell application \"Cursor\" to activate"], check=True)
+            time.sleep(0.15)
+
+            if pag is not None:
+                # Type the text directly
+                pag.typewrite(text, interval=0.005)
+                if press_enter:
+                    pag.press('enter')
+            else:
+                # Fallback: clipboard + paste (+ optional Enter) via AppleScript
+                subprocess.run(["pbcopy"], input=text.encode("utf-8"), check=True)
+                osa_cmd = [
+                    "osascript",
+                    "-e", "tell application \"System Events\" to keystroke \"v\" using {command down}",
+                ]
+                if press_enter:
+                    osa_cmd.extend(["-e", "tell application \"System Events\" to key code 36"])
+                subprocess.run(osa_cmd, check=True)
+        except Exception as e:
+            logger.error(f"Failed to send to Cursor: {e}")
 
     def save_transcript(self, transcript):
         """Save transcript to file"""
