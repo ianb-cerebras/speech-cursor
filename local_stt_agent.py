@@ -11,6 +11,7 @@ import numpy as np
 import sys
 import subprocess
 import json
+from dotenv import load_dotenv
 try:
     import pyautogui as pag
     pag.FAILSAFE = False
@@ -23,9 +24,18 @@ except Exception:
 import termios
 import tty
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Load environment variables from .env (project root or parent)
+load_dotenv()
+
+# Configure logging (set with env LOG_LEVEL=DEBUG|INFO|WARNING|ERROR)
+log_level_name = os.environ.get("LOG_LEVEL", "INFO").upper()
+log_level = getattr(logging, log_level_name, logging.INFO)
+logging.basicConfig(
+    level=log_level,
+    format="%(asctime)s %(levelname)s:%(name)s:%(message)s"
+)
 logger = logging.getLogger("local_stt")
+logger.setLevel(log_level)
 
 class LocalSTTAgent:
     def __init__(self, model_size="base", device="cpu", compute_type="int8"):
@@ -53,6 +63,7 @@ class LocalSTTAgent:
         self.is_recording = False
         self.audio_buffer = []
         self.should_exit = False
+        self.transcripts = []
         
         # Initialize Whisper model
         logger.info(f"Loading Whisper model: {model_size} on {device}")
@@ -91,8 +102,13 @@ class LocalSTTAgent:
     def audio_callback(self, in_data, frame_count, time_info, status):
         """Callback for audio recording"""
         if self.recording and self.is_recording:
-            self.audio_queue.put(in_data)
-            self.audio_buffer.append(in_data)
+            try:
+                self.audio_queue.put(in_data)
+                self.audio_buffer.append(in_data)
+                if logger.isEnabledFor(logging.DEBUG):
+                    logger.debug(f"audio_callback: queued {len(in_data)} bytes, queue={self.audio_queue.qsize()}")
+            except Exception as e:
+                logger.error(f"audio_callback error: {e}")
         return (in_data, pyaudio.paContinue)
 
     def start_recording(self):
@@ -101,14 +117,18 @@ class LocalSTTAgent:
         self.recording = True
         
         # Open audio stream
-        self.stream = self.audio.open(
-            format=self.format,
-            channels=self.channels,
-            rate=self.rate,
-            input=True,
-            frames_per_buffer=self.chunk,
-            stream_callback=self.audio_callback
-        )
+        try:
+            self.stream = self.audio.open(
+                format=self.format,
+                channels=self.channels,
+                rate=self.rate,
+                input=True,
+                frames_per_buffer=self.chunk,
+                stream_callback=self.audio_callback
+            )
+        except Exception as e:
+            logger.exception("Failed to open audio stream")
+            raise
         
         self.stream.start_stream()
 
@@ -144,17 +164,22 @@ class LocalSTTAgent:
             
         # Combine all audio chunks
         audio_data = b''.join(self.audio_buffer)
+        logger.info(f"Recorded audio buffer bytes: {len(audio_data)}")
         
         if len(audio_data) > 0:
             # Save audio chunk
             temp_file = self.save_audio_chunk(audio_data)
+            logger.info(f"Saved temp WAV: {temp_file}")
             
             # Transcribe
+            start_ts = time.time()
             transcript = self.transcribe_audio(temp_file)
             trimmed = (transcript or "").strip()
+            logger.info(f"Transcription finished in {time.time() - start_ts:.2f}s; chars={len(trimmed)}")
             
             # Ignore very short fragments (<4 chars), like inspiration
             if trimmed and len(trimmed) < 4:
+                logger.info("Ignoring very short fragment (<4 chars)")
                 os.remove(temp_file)
                 return
             
@@ -198,6 +223,7 @@ class LocalSTTAgent:
             vad_filter = os.environ.get("VAD_FILTER", "1") != "0"
             vad_min_silence_ms = int(os.environ.get("VAD_MIN_SILENCE_MS", os.environ.get("SILENCE_MS", "400")))
 
+            t0 = time.time()
             segments, info = self.model.transcribe(
                 audio_file,
                 beam_size=beam_size,
@@ -208,18 +234,21 @@ class LocalSTTAgent:
             
             # Collect all segments
             transcript = ""
+            seg_count = 0
             for segment in segments:
                 transcript += segment.text + " "
+                seg_count += 1
             
             transcript = transcript.strip()
             
             if info.language:
                 logger.info(f"Detected language: {info.language} (probability: {info.language_probability:.2f})")
+            logger.info(f"Whisper returned {seg_count} segments in {time.time() - t0:.2f}s")
             
             return transcript
             
         except Exception as e:
-            logger.error(f"Error transcribing audio: {e}")
+            logger.exception(f"Error transcribing audio: {e}")
             return ""
 
     def send_to_cursor_chat(self, text: str, press_enter: bool | None = None):
@@ -263,8 +292,17 @@ class LocalSTTAgent:
                 with open(self.transcript_file, "a", encoding="utf-8") as f:
                     f.write(f"[{timestamp}] {transcript}\n")
                 logger.info(f"Transcript saved to: {self.transcript_file}")
+                # Keep an in-memory log for this session
+                self.transcripts.append(transcript)
             except Exception as e:
                 logger.error(f"Error saving transcript: {e}")
+
+    def print_all_transcribed_text(self):
+        """Print all transcribed text captured during this session."""
+        if not self.transcripts:
+            print("(no transcripts yet)")
+            return
+        print("\n".join(self.transcripts))
 
     def handle_transcript_actions(self, transcript: str) -> None:
         """Parse simple voice commands and execute local actions (exit only)."""
@@ -281,39 +319,6 @@ class LocalSTTAgent:
         except Exception as e:
                 logger.error(f"Action handling error: {e}")
 
-    def run_push_to_talk(self):
-        """Run continuous transcription with short chunks"""
-        logger.info("Starting continuous transcription (press Ctrl+C to stop)")
-        logger.info("Recording in 3-second chunks and transcribing automatically")
-        print("\n🎤 Continuous Recording Mode")
-        print("Recording in 3-second chunks...")
-        print("Press Ctrl+C to exit\n")
-        
-        try:
-            # Start recording stream
-            self.start_recording()
-            
-            # Record in continuous chunks
-            while True:
-                if self.should_exit:
-                    break
-                # Record for 3 seconds
-                self.audio_buffer = []
-                self.is_recording = True
-                time.sleep(3)
-                self.is_recording = False
-                
-                # Process the recorded audio
-                if self.audio_buffer:
-                    self.process_recorded_audio()
-                
-                # Small delay between chunks
-                time.sleep(0.5)
-                
-        except KeyboardInterrupt:
-            logger.info("Stopping transcription...")
-        finally:
-            self.cleanup()
 
     def run_endpointing_silence(self):
         """Run continuous transcription using a silence-threshold endpointing strategy.
@@ -409,96 +414,6 @@ class LocalSTTAgent:
             logger.info("Stopping transcription...")
         finally:
             self.cleanup()
-
-    def run_auto_record_400ms(self):
-        """Run automatic recording mode with 400ms delay to stop recording after speech ends
-        
-        Env:
-          - START_LEVEL: RMS threshold to start an utterance (default: 0.02)
-          - STOP_LEVEL: RMS threshold below which audio is considered silent (default: 0.01)
-          - SILENCE_MS: trailing silence (ms) to close utterance (default: 400)
-          - MIN_UTTER_MS: minimum utterance length (ms) before allowing close (default: 400)
-        """
-        print("\n🎤 Auto Recording Mode (400ms delay)")
-        print("Recording will automatically start when speech is detected and stop shortly after you finish")
-        print("Press Ctrl+C to exit\n")
-        
-        # Hysteresis thresholds and timing
-        start_level = float(os.environ.get("START_LEVEL", "0.02"))
-        stop_level = float(os.environ.get("STOP_LEVEL", "0.01"))
-        silence_ms = int(os.environ.get("SILENCE_MS", "400"))
-        min_utter_ms = int(os.environ.get("MIN_UTTER_MS", "400"))
-        
-        try:
-            self.start_recording()
-            self.is_recording = False  # Start with recording off
-            
-            utter_start_time = 0.0
-            last_audio_time = time.time()
-            trailing_silence_ms = 0
-            in_utterance = False
-            
-            while True:
-                if self.should_exit:
-                    break
-                try:
-                    chunk = self.audio_queue.get(timeout=0.1)
-                except queue.Empty:
-                    # If in utterance, accumulate silence by the gap
-                    if in_utterance:
-                        gap_ms = int((time.time() - last_audio_time) * 1000)
-                        trailing_silence_ms += gap_ms
-                        # Check for close conditions even without new audio
-                        utter_len_ms = int((time.time() - utter_start_time) * 1000)
-                        if trailing_silence_ms >= silence_ms and utter_len_ms >= min_utter_ms:
-                            self.is_recording = False
-                            self.process_recorded_audio()
-                            # Reset for next utterance
-                            self.audio_buffer = []
-                            in_utterance = False
-                            trailing_silence_ms = 0
-                    last_audio_time = time.time()
-                    continue
-
-                # We received audio
-                last_audio_time = time.time()
-                
-                # Determine level
-                rms = self._compute_rms(chunk)
-                
-                if not in_utterance:
-                    if rms >= start_level:
-                        # Speech started - begin recording
-                        in_utterance = True
-                        self.is_recording = True
-                        utter_start_time = time.time()
-                        trailing_silence_ms = 0
-                        self.audio_buffer = []  # Clear buffer at start of new utterance
-                        print("🎤 Recording started...", flush=True)
-                        # Fall through to append chunk
-                    else:
-                        # Still waiting for start
-                        continue
-                
-                # In utterance: append current chunk
-                self.audio_buffer.append(chunk)
-                
-                if rms < stop_level:
-                    # Accumulate trailing silence using chunk duration
-                    chunk_ms = int((len(chunk) / 2) / self.rate * 1000)  # 2 bytes per sample (int16)
-                    trailing_silence_ms += max(chunk_ms, 1)
-                else:
-                    trailing_silence_ms = 0
-                
-                # Check close conditions
-                utter_len_ms = int((time.time() - utter_start_time) * 1000)
-                if trailing_silence_ms >= silence_ms and utter_len_ms >= min_utter_ms:
-                    self.is_recording = False
-                    self.process_recorded_audio()
-                    # Reset for next utterance
-                    self.audio_buffer = []
-                    in_utterance = False
-                    trailing_silence_ms = 0
 
     def run_cartesia_streaming(self):
         """Stream microphone PCM to Cartesia STT WebSocket and handle final transcripts (like inspiration)."""
@@ -640,63 +555,10 @@ def main():
     
     print("🎤 Local STT Agent Ready")
     
-    # Choose mode based on env
-    endpointing_mode = os.environ.get("ENDPOINTING", "auto").lower()
-
-    if endpointing_mode == "cartesia":
-        agent.run_cartesia_streaming()
-        return
-
-    if endpointing_mode == "silence":
-        agent.run_endpointing_silence()
-        return
-        
-    if endpointing_mode == "auto":
-        agent.run_auto_record_400ms()
-        return
-
-    # Default: toggle mode via 'm' key or stdin TOGGLE
-    agent.start_recording()
-
-    if sys.stdin.isatty():
-        def listen_for_keys():
-            fd = sys.stdin.fileno()
-            old_settings = termios.tcgetattr(fd)
-            try:
-                tty.setcbreak(fd)
-                print("Press 'm' to toggle microphone. Press Ctrl+C to exit.", flush=True)
-                while True:
-                    ch = sys.stdin.read(1)
-                    if not ch:
-                        continue
-                    if ch.lower() == 'm':
-                        agent.toggle_recording()
-            except KeyboardInterrupt:
-                pass
-            finally:
-                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-
-        t = threading.Thread(target=listen_for_keys, daemon=True)
-        t.start()
-        try:
-            while True:
-                if agent.should_exit:
-                    break
-                time.sleep(0.2)
-        except KeyboardInterrupt:
-            pass
-        finally:
-            agent.cleanup()
-    else:
-        print("Waiting for TOGGLE commands from stdin...", flush=True)
-        while True:
-            try:
-                command = input().strip()
-                if command == "TOGGLE":
-                    agent.toggle_recording()
-            except EOFError:
-                break
-        agent.cleanup()
+    # Force Cartesia streaming mode only
+    print("Mode: Cartesia streaming")
+    agent.run_cartesia_streaming()
+    return
 
 if __name__ == "__main__":
     main()
