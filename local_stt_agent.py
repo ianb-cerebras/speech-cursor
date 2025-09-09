@@ -267,8 +267,8 @@ class LocalSTTAgent:
             time.sleep(0.15)
 
             if pag is not None:
-                # Type the text directly
-                pag.typewrite(text, interval=0.005)
+                # Type the text directly with faster speed
+                pag.typewrite(text, interval=0.000001)  # instant
                 if press_enter:
                     pag.press('enter')
             else:
