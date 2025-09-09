@@ -2,24 +2,23 @@ import React from 'react';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800 relative overflow-hidden font-sans">
-      {/* Artsy design elements */}
-      <div className="absolute top-12 left-8 w-24 h-24 border-2 border-gray-300 rounded-full opacity-40"></div>
-      <div className="absolute bottom-20 right-12 w-32 h-32 border-2 border-gray-400 transform rotate-45 opacity-30"></div>
-      <div className="absolute top-1/3 right-1/4 w-16 h-16 bg-indigo-100 rounded opacity-50"></div>
+    <div className="min-h-screen bg-gray-100 text-gray-800 relative overflow-hidden font-sans">
+      {/* Minimal boring elements */}
+      <div className="absolute top-10 left-6 w-20 h-20 border border-gray-300 opacity-30"></div>
+      <div className="absolute bottom-24 right-16 w-28 h-28 border border-gray-400 opacity-20"></div>
       
-      <header className="border-b border-gray-200 bg-white relative z-10">
+      <header className="border-b border-gray-300 bg-white relative z-10">
         <div className="max-w-6xl mx-auto px-6 py-5 flex items-center justify-between">
-          <div className="text-2xl font-light text-indigo-900 flex items-center tracking-wide">
-            CREATIVE PORTFOLIO
+          <div className="text-2xl font-normal text-gray-700 flex items-center">
+            Professional Portfolio
           </div>
           <nav>
-            <ul className="flex gap-8 text-sm font-medium">
-              <li><a href="#work" className="text-gray-600 hover:text-indigo-800 transition-all duration-300">Work</a></li>
-              <li><a href="#about" className="text-gray-600 hover:text-indigo-800 transition-all duration-300">About</a></li>
-              <li><a href="#approach" className="text-gray-600 hover:text-indigo-800 transition-all duration-300">Approach</a></li>
-              <li><a href="#recognition" className="text-gray-600 hover:text-indigo-800 transition-all duration-300">Recognition</a></li>
-              <li><a href="#connect" className="text-gray-600 hover:text-indigo-800 transition-all duration-300">Connect</a></li>
+            <ul className="flex gap-8 text-sm font-normal">
+              <li><a href="#work" className="text-gray-600 hover:text-gray-800 transition-all duration-300">Work</a></li>
+              <li><a href="#about" className="text-gray-600 hover:text-gray-800 transition-all duration-300">About</a></li>
+              <li><a href="#services" className="text-gray-600 hover:text-gray-800 transition-all duration-300">Services</a></li>
+              <li><a href="#experience" className="text-gray-600 hover:text-gray-800 transition-all duration-300">Experience</a></li>
+              <li><a href="#contact" className="text-gray-600 hover:text-gray-800 transition-all duration-300">Contact</a></li>
             </ul>
           </nav>
         </div>
@@ -27,168 +26,168 @@ export default function Home() {
 
       <main className="max-w-6xl mx-auto px-6 py-16 relative z-10">
         <section className="mb-28 text-center">
-          <h1 className="text-4xl font-light mb-7 text-gray-900 tracking-wide">
-            Creative Vision
+          <h1 className="text-4xl font-normal mb-7 text-gray-800">
+            Professional Work
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto font-light mb-14">
-            A collection of artistic explorations and creative expressions
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-14">
+            A collection of professional projects and accomplishments
           </p>
           <div className="flex justify-center">
-            <a href="#work" className="px-8 py-3 border border-gray-800 text-gray-800 rounded font-medium text-lg hover:bg-gray-800 hover:text-white transition-all duration-300">
-              View Portfolio
+            <a href="#work" className="px-8 py-3 border border-gray-600 text-gray-700 rounded text-lg">
+              View Work
             </a>
           </div>
         </section>
 
         <section id="work" className="mb-28">
-          <h2 className="text-3xl font-light mb-14 text-gray-900 text-center">
-            Selected Works
+          <h2 className="text-3xl font-normal mb-14 text-gray-800 text-center">
+            Selected Projects
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {/* Art piece 1 */}
+            {/* Project 1 */}
             <div className="group">
-              <div className="h-80 bg-white border border-gray-200 rounded-lg mb-5 flex items-center justify-center transition-all duration-500 group-hover:shadow-lg">
-                <div className="text-indigo-300 text-7xl font-light">●</div>
+              <div className="h-80 bg-white border border-gray-200 rounded mb-5 flex items-center justify-center">
+                <div className="text-gray-400">Project Image</div>
               </div>
-              <h3 className="font-medium text-lg mb-2 text-gray-900">Abstract Composition</h3>
-              <p className="text-gray-500 text-sm">Digital Art, 2024</p>
+              <h3 className="font-normal text-lg mb-2 text-gray-800">Project Title</h3>
+              <p className="text-gray-600 text-sm">Project details, 2024</p>
             </div>
             
-            {/* Art piece 2 */}
+            {/* Project 2 */}
             <div className="group">
-              <div className="h-80 bg-white border border-gray-200 rounded-lg mb-5 flex items-center justify-center transition-all duration-500 group-hover:shadow-lg">
-                <div className="text-indigo-300 text-7xl font-light">▲</div>
+              <div className="h-80 bg-white border border-gray-200 rounded mb-5 flex items-center justify-center">
+                <div className="text-gray-400">Project Image</div>
               </div>
-              <h3 className="font-medium text-lg mb-2 text-gray-900">Geometric Forms</h3>
-              <p className="text-gray-500 text-sm">Mixed Media, 2023</p>
+              <h3 className="font-normal text-lg mb-2 text-gray-800">Project Title</h3>
+              <p className="text-gray-600 text-sm">Project details, 2023</p>
             </div>
             
-            {/* Art piece 3 */}
+            {/* Project 3 */}
             <div className="group">
-              <div className="h-80 bg-white border border-gray-200 rounded-lg mb-5 flex items-center justify-center transition-all duration-500 group-hover:shadow-lg">
-                <div className="text-indigo-300 text-7xl font-light">■</div>
+              <div className="h-80 bg-white border border-gray-200 rounded mb-5 flex items-center justify-center">
+                <div className="text-gray-400">Project Image</div>
               </div>
-              <h3 className="font-medium text-lg mb-2 text-gray-900">Minimal Landscapes</h3>
-              <p className="text-gray-500 text-sm">Oil on Canvas, 2023</p>
+              <h3 className="font-normal text-lg mb-2 text-gray-800">Project Title</h3>
+              <p className="text-gray-600 text-sm">Project details, 2023</p>
             </div>
           </div>
         </section>
 
         <section id="about" className="mb-28">
           <div className="flex flex-col md:flex-row gap-14 items-center">
-            <div className="md:w-2/3">
-              <h2 className="text-3xl font-light mb-8 text-gray-900">
-                Creative Philosophy
+            <div className="md:w-1/2">
+              <h2 className="text-3xl font-normal mb-8 text-gray-800">
+                Professional Background
               </h2>
               <p className="text-lg text-gray-600 mb-7 leading-relaxed">
-                My work explores the intersection of form, color, and emotion through a contemporary lens. 
-                I believe in the power of visual storytelling to convey complex ideas and evoke profound feelings.
+                I am a professional with experience in my field. 
+                I work diligently to achieve results and maintain high standards.
               </p>
               <p className="text-lg text-gray-600 leading-relaxed">
-                Drawing inspiration from modern design principles and natural elements, 
-                I create visual experiences that invite contemplation, connection, and aesthetic appreciation.
+                My approach is methodical and focused on delivering quality outcomes. 
+                I believe in continuous improvement and professional development.
               </p>
             </div>
-            <div className="md:w-1/3 h-96 bg-white border border-gray-200 rounded-lg flex items-center justify-center">
-              <div className="text-indigo-400 text-8xl font-light">★</div>
+            <div className="md:w-1/2 h-96 bg-white border border-gray-300 rounded flex items-center justify-center">
+              <div className="text-gray-400">Professional Image</div>
             </div>
           </div>
         </section>
 
-        <section id="approach" className="mb-28">
-          <h2 className="text-3xl font-light mb-14 text-gray-900 text-center">
-            Creative Process
+        <section id="services" className="mb-28">
+          <h2 className="text-3xl font-normal mb-14 text-gray-800 text-center">
+            Professional Services
           </h2>
-          <div className="bg-white border border-gray-200 p-12 rounded-lg max-w-3xl mx-auto">
+          <div className="bg-white border border-gray-300 p-12 rounded max-w-3xl mx-auto">
             <p className="text-lg text-gray-600 mb-8 leading-relaxed text-center">
-              Each project begins with deep observation and thoughtful reflection. I work across multiple mediums,
-              allowing each discipline to inform the others in unexpected and exciting ways.
+              I provide professional services in my area of expertise. 
+              My work follows established standards and best practices.
             </p>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed text-center">
-              My approach emphasizes experimentation and authenticity. I seek to distill complex concepts into their purest visual forms,
-              creating work that resonates on both intellectual and emotional levels.
+              My approach is consistent and reliable. 
+              I focus on meeting client needs and delivering expected results.
             </p>
             <div className="flex justify-center">
-              <div className="px-7 py-4 border border-gray-800 text-gray-800 rounded font-medium">
-                Artistic Methodology
+              <div className="px-7 py-4 border border-gray-600 text-gray-700">
+                Service Details
               </div>
             </div>
           </div>
         </section>
 
-        <section id="recognition" className="mb-28">
-          <h2 className="text-3xl font-light mb-14 text-gray-900 text-center">
-            Recognition & Features
+        <section id="experience" className="mb-28">
+          <h2 className="text-3xl font-normal mb-14 text-gray-800 text-center">
+            Professional Experience
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            <article className="bg-white border border-gray-200 p-9 rounded-lg">
-              <div className="h-44 bg-gray-100 rounded-lg mb-7 flex items-center justify-center">
-                <div className="text-gray-500 font-medium text-xl">Gallery Exhibition</div>
+            <article className="bg-white border border-gray-300 p-9 rounded">
+              <div className="h-44 bg-gray-100 rounded mb-7 flex items-center justify-center">
+                <div className="text-gray-600 font-normal">Experience Details</div>
               </div>
-              <h3 className="font-medium text-xl mb-4 text-gray-900">Featured Artist</h3>
+              <h3 className="font-normal text-xl mb-4 text-gray-800">Position Title</h3>
               <p className="text-gray-600 mb-5">
-                Contemporary Art Gallery, New York
+                Company Name, Location
               </p>
-              <p className="text-gray-500 text-sm">
-                Selected works displayed in group exhibition exploring modern minimalism
+              <p className="text-gray-600 text-sm">
+                Description of responsibilities and achievements in this position
               </p>
               <div className="mt-5 text-sm text-gray-500">2024</div>
             </article>
             
-            <article className="bg-white border border-gray-200 p-9 rounded-lg">
-              <div className="h-44 bg-gray-100 rounded-lg mb-7 flex items-center justify-center">
-                <div className="text-gray-500 font-medium text-xl">Creative Residency</div>
+            <article className="bg-white border border-gray-300 p-9 rounded">
+              <div className="h-44 bg-gray-100 rounded mb-7 flex items-center justify-center">
+                <div className="text-gray-600 font-normal">Experience Details</div>
               </div>
-              <h3 className="font-medium text-xl mb-4 text-gray-900">Artist Fellowship</h3>
+              <h3 className="font-normal text-xl mb-4 text-gray-800">Position Title</h3>
               <p className="text-gray-600 mb-5">
-                International Arts Foundation
+                Company Name, Location
               </p>
-              <p className="text-gray-500 text-sm">
-                Six-month residency focused on experimental compositions and cross-disciplinary collaboration
+              <p className="text-gray-600 text-sm">
+                Description of responsibilities and achievements in this position
               </p>
               <div className="mt-5 text-sm text-gray-500">2023</div>
             </article>
           </div>
         </section>
 
-        <section id="connect" className="mb-28">
-          <div className="bg-indigo-900 rounded-lg p-14 text-white">
-            <h2 className="text-3xl font-light mb-8 text-center">
-              Let's Collaborate
+        <section id="contact" className="mb-28">
+          <div className="bg-gray-200 rounded p-14 text-gray-800">
+            <h2 className="text-3xl font-normal mb-8 text-center">
+              Contact Information
             </h2>
-            <p className="text-xl text-center mb-12 max-w-2xl mx-auto font-light">
-              Interested in my creative approach or potential projects? I'd love to connect and explore possibilities.
+            <p className="text-xl text-center mb-12 max-w-2xl mx-auto">
+              For professional inquiries, please use the contact information below.
             </p>
             <div className="flex flex-col items-center">
               <ul className="space-y-5 text-lg mb-12">
                 <li className="flex items-center">
-                  <div className="w-6 h-6 bg-indigo-600 mr-5 rounded-full"></div>
-                  Email: <a href="mailto:creative@example.com" className="underline hover:no-underline ml-3">creative@example.com</a>
+                  <div className="w-6 h-6 bg-gray-300 mr-5"></div>
+                  Email: <a href="mailto:professional@example.com" className="underline ml-3">professional@example.com</a>
                 </li>
                 <li className="flex items-center">
-                  <div className="w-6 h-6 bg-indigo-600 mr-5 rounded-full"></div>
-                  Instagram: <a href="https://instagram.com/creative" className="underline hover:no-underline ml-3">@creativeportfolio</a>
+                  <div className="w-6 h-6 bg-gray-300 mr-5"></div>
+                  LinkedIn: <a href="https://linkedin.com/in/professional" className="underline ml-3">linkedin.com/in/professional</a>
                 </li>
                 <li className="flex items-center">
-                  <div className="w-6 h-6 bg-indigo-600 mr-5 rounded-full"></div>
-                  Behance: <a href="https://behance.net/creative" className="underline hover:no-underline ml-3">creative-works</a>
+                  <div className="w-6 h-6 bg-gray-300 mr-5"></div>
+                  Phone: <a href="tel:+1234567890" className="underline ml-3">+1 (234) 567-890</a>
                 </li>
                 <li className="flex items-center">
-                  <div className="w-6 h-6 bg-indigo-600 mr-5 rounded-full"></div>
-                  LinkedIn: <a href="https://linkedin.com/in/creative" className="underline hover:no-underline ml-3">creative-professional</a>
+                  <div className="w-6 h-6 bg-gray-300 mr-5"></div>
+                  Website: <a href="https://professional-portfolio.com" className="underline ml-3">professional-portfolio.com</a>
                 </li>
               </ul>
-              <a href="mailto:creative@example.com" className="px-9 py-4 bg-white text-indigo-900 rounded font-medium border border-white hover:bg-transparent hover:text-white transition-all duration-300">
-                Send Message
+              <a href="mailto:professional@example.com" className="px-9 py-4 bg-gray-300 text-gray-800 rounded border border-gray-400">
+                Send Email
               </a>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-gray-200 bg-white">
-        <div className="max-w-6xl mx-auto px-6 py-9 text-center text-gray-600 font-light text-sm">
-          © {new Date().getFullYear()} Creative Portfolio — All works copyright protected
+      <footer className="border-t border-gray-300 bg-white">
+        <div className="max-w-6xl mx-auto px-6 py-9 text-center text-gray-600 text-sm">
+          © {new Date().getFullYear()} Professional Portfolio
         </div>
       </footer>
     </div>

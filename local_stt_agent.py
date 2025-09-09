@@ -252,35 +252,36 @@ class LocalSTTAgent:
             return ""
 
     def send_to_cursor_chat(self, text: str, press_enter: bool | None = None):
-        """Send text to Cursor using pyautogui; optionally press Enter (chat).
+        """Send text to Cursor using clipboard copy-paste; optionally press Enter (chat).
 
         If press_enter is None, reads env CURSOR_PRESS_ENTER (default "1").
-        Set CURSOR_PRESS_ENTER=0 to avoid submitting and just type into editor.
+        Set CURSOR_PRESS_ENTER=0 to avoid submitting and just paste into editor.
+        
+        If CURSOR_ACTIVATE=0, the Cursor app will not be brought to front (runs in background).
+        Default behavior (CURSOR_ACTIVATE=1 or not set) activates the Cursor app.
         """
         try:
             # Resolve enter behavior from arg/env
             if press_enter is None:
                 press_enter = os.environ.get("CURSOR_PRESS_ENTER", "1") != "0"
+            
+            # Check if we should activate the Cursor app (default is True for backward compatibility)
+            should_activate = os.environ.get("CURSOR_ACTIVATE", "1") != "0"
+            
+            # Bring Cursor to front only if CURSOR_ACTIVATE is not set to 0
+            if should_activate:
+                subprocess.run(["osascript", "-e", "tell application \"Cursor\" to activate"], check=True)
+                time.sleep(0.15)
 
-            # Bring Cursor to front (so keystrokes go to the right app)
-            subprocess.run(["osascript", "-e", "tell application \"Cursor\" to activate"], check=True)
-            time.sleep(0.15)
-
-            if pag is not None:
-                # Type the text directly with faster speed
-                pag.typewrite(text, interval=0.000001)  # instant
-                if press_enter:
-                    pag.press('enter')
-            else:
-                # Fallback: clipboard + paste (+ optional Enter) via AppleScript
-                subprocess.run(["pbcopy"], input=text.encode("utf-8"), check=True)
-                osa_cmd = [
-                    "osascript",
-                    "-e", "tell application \"System Events\" to keystroke \"v\" using {command down}",
-                ]
-                if press_enter:
-                    osa_cmd.extend(["-e", "tell application \"System Events\" to key code 36"])
-                subprocess.run(osa_cmd, check=True)
+            # Always use clipboard + paste (+ optional Enter) via AppleScript
+            subprocess.run(["pbcopy"], input=text.encode("utf-8"), check=True)
+            osa_cmd = [
+                "osascript",
+                "-e", "tell application \"System Events\" to keystroke \"v\" using {command down}",
+            ]
+            if press_enter:
+                osa_cmd.extend(["-e", "tell application \"System Events\" to key code 36"])
+            subprocess.run(osa_cmd, check=True)
         except Exception as e:
             logger.error(f"Failed to send to Cursor: {e}")
 
