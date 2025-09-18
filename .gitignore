@@ -28,6 +28,7 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+.cursorrules
 
 # Logs
 *.log
