@@ -1,26 +1,247 @@
 @import "tailwindcss";
 
 :root {
-  --background: #1e40af; /* Blue background */
-  --foreground: #ffffff; /* White text */
+  --background: #ffffff; /* Clean white background */
+  --foreground: #2d3748; /* Dark slate text */
+  --accent: #ff6b6b; /* Vibrant coral red */
+  --secondary: #4ecdc4; /* Teal accent */
+  --tertiary: #ffd166; /* Warm yellow */
+  --quaternary: #6a0dad; /* Purple */
+  --border-color: #e2e8f0; /* Light border color */
+  --section-bg: #f8f9fa; /* Very light gray section background */
+  --gradient-start: #ff6b6b;
+  --gradient-end: #4ecdc4;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #1e40af; /* Blue background */
-    --foreground: #ffffff; /* White text */
+    --background: #1a202c; /* Dark background */
+    --foreground: #e2e8f0; /* Light text */
+    --accent: #ff6b6b; /* Vibrant coral red */
+    --secondary: #4ecdc4; /* Teal accent */
+    --tertiary: #ffd166; /* Warm yellow */
+    --quaternary: #c3a6e0; /* Light purple */
+    --border-color: #2d3748; /* Dark border color */
+    --section-bg: #2d3748; /* Darker section background */
+    --gradient-start: #ff6b6b;
+    --gradient-end: #4ecdc4;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Vibrant section styling */
+.vibrant-section {
+  padding: 80px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.vibrant-section-alt {
+  background: var(--section-bg);
+}
+
+/* Dynamic border styles */
+.dynamic-border {
+  border: 2px solid var(--accent);
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.dynamic-border:hover {
+  border-color: var(--secondary);
+  transform: scale(1.02);
+}
+
+.dynamic-border::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border: 1px solid var(--tertiary);
+  pointer-events: none;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.dynamic-border:hover::before {
+  border-color: var(--quaternary);
+}
+
+/* Expressive title styling */
+.expressive-title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  font-size: 3rem;
+  line-height: 1.1;
+  background: linear-gradient(45deg, var(--gradient-start), var(--gradient-end));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: all 0.3s ease;
+}
+
+.expressive-title:hover {
+  background: linear-gradient(45deg, var(--gradient-end), var(--gradient-start));
+  -webkit-background-clip: text;
+  background-clip: text;
+  transform: scale(1.05);
+}
+
+.expressive-subtitle {
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  font-size: 1.5rem;
+  line-height: 1.4;
+  color: var(--secondary);
+}
+
+/* Playful card styling */
+.playful-card {
+  background: var(--background);
+  border-radius: 12px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.playful-card:hover {
+  transform: translateY(-10px) rotate(2deg);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.playful-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(90deg, var(--accent), var(--secondary), var(--tertiary), var(--quaternary));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.playful-card:hover::after {
+  transform: scaleX(1);
+}
+
+/* Animated navigation */
+.animated-nav a {
+  color: var(--foreground);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  padding: 5px 0;
+}
+
+.animated-nav a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+
+.animated-nav a:hover {
+  color: var(--accent);
+}
+
+.animated-nav a:hover::after {
+  width: 100%;
+}
+
+/* Expressive button styling */
+.expressive-button {
+  background: linear-gradient(45deg, var(--accent), var(--secondary));
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.expressive-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+}
+
+.expressive-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.expressive-button:hover::before {
+  left: 100%;
+}
+
+/* Floating elements animation */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+  100% { transform: translateY(0px); }
+}
+
+.floating {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* Color changing animation */
+@keyframes colorChange {
+  0% { color: var(--accent); }
+  25% { color: var(--secondary); }
+  50% { color: var(--tertiary); }
+  75% { color: var(--quaternary); }
+  100% { color: var(--accent); }
+}
+
+.color-change {
+  animation: colorChange 8s infinite;
+}
+
+/* Expressive footer */
+.expressive-footer {
+  border-top: 2px solid var(--border-color);
+  background: linear-gradient(135deg, var(--accent), var(--secondary));
+  color: white;
 }

@@ -1,11 +1,33 @@
-.env
-
+# Virtual environment
 venv/
+env/
+ENV/
 
-transcripts/
-
-.cursorrules
-
+# Node modules
 node_modules/
 
-requirements.txt
+# Transcripts
+transcripts/
+
+# Test files
+test.py
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
